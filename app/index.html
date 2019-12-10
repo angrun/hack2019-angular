@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My AngularJS App</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
+    <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body onload="loadData()">
+<ul id="images-list" style="columns: 1; list-style-type: none;">
+
+</ul>
+</body>
+<script>
+
+  let imgData = {data: {photos: {photo: []}}};
+
+  function loadData() {
+    fetch("https://www.flickr.com/services/rest/?method=flickr.photos.search&tags=cat&per_page=50&api_key=e4774ca74391030bec9bfac5e014f5d7&format=json&nojsoncallback=1")            .then(resp => resp.json())
+            .then(data => {
+              imgData.data.photos.photo.push(...data.photos.photo);
+              imgData.data.photos.photo.forEach(
+                      photo => {
+                        let l = document.createElement("li");
+                        l.id = `list-item-${photo.id}`;
+                        l.style.paddingBottom = '5%';
+                        let i = document.createElement("img");
+                        i.src = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_m.jpg`;
+                        i.style.width = "100%";
+                        l.appendChild(i);
+                        document.getElementById("images-list").appendChild(l);
+                      }
+              );
+            });
+  }
+
+  window.onscroll = function(ev) {
+    // console.log(window.innerHeight) // 578
+    // console.log(window.scrollY) // 3677.333251953125
+    // console.log(document.body.offsetHeight) // 4223
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight / 2) {
+    //     if (localStorage["images"]) {
+    //         let imgs = localStorage["images"];
+    //         console.log(imgs);
+    //         imgs.push(imgData.data.photos.photo.splice(0, 50));
+    //         localStorage["images"] = imgs;
+    //     } else {
+    //         localStorage["images"] = imgData.data.photos.photo.splice(0, 50)
+    //     }
+    loadData();
+    }
+  };
+</script>
+<script src="lib/angular/angular.js"></script>
+<script src="lib/angular-route/angular-route.js"></script>
+<script src="app.js"></script>
+<script src="core/version/version.js"></script>
+<script src="core/version/version-directive.js"></script>
+<script src="core/version/interpolate-filter.js"></script>
+</html>
